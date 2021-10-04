@@ -2,7 +2,6 @@ package example1
 
 import (
 	"context"
-	"fmt"
 	"log"
 
 	"github.com/aws/aws-sdk-go-v2/config"
@@ -45,7 +44,7 @@ func List(cmd *cobra.Command, args []string) {
 		printInfo(client, tableName)
 	}
 
-	fmt.Println("Successfully listed tables")
+	log.Println("Successfully listed tables")
 }
 
 func printInfo(client *dynamodb.Client, tableName string) {

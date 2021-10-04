@@ -14,7 +14,7 @@ var rootCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(example1Cmd)
-	//rootCmd.AddCommand(example2Cmd)
+	rootCmd.AddCommand(example2Cmd)
 }
 
 // Execute the root command.

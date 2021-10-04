@@ -10,6 +10,6 @@ var example2Cmd = &cobra.Command{
 }
 
 func init() {
-	//example2Cmd.AddCommand(example2ListCmd)
+	example2Cmd.AddCommand(example2ListCmd)
 	//example2Cmd.AddCommand(example2PutCmd)
 }

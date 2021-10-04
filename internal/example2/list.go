@@ -2,12 +2,10 @@ package example2
 
 import (
 	"context"
-	"fmt"
 	"log"
 
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
-	"github.com/aws/aws-sdk-go/aws"
 	"github.com/spf13/cobra"
 )
 
@@ -22,48 +20,23 @@ func List(cmd *cobra.Command, args []string) {
 	// Create the S3 client
 	client := s3.NewFromConfig(cfg)
 
-	// Set the parameters
-	params := &s3.ListBucketsInput{
-		Limit: aws.Int32(5),
-	}
-
 	// List tables
-	resp, err := client.ListBuckets(context.TODO(), params)
+	resp, err := client.ListBuckets(context.TODO(), nil)
 	if err != nil {
 		log.Fatalf("failed to list tables: %v", err)
 	}
 
-	if len(resp.BucketNames) == 0 {
+	if len(resp.Buckets) == 0 {
 		log.Print("no table has been found")
 	} else {
-		log.Printf("%d tables has been found", len(resp.BucketNames))
+		log.Printf("%d tables has been found", len(resp.Buckets))
 	}
 
 	// Process the buckets
-	for _, bucketName := range resp.BucketNames {
+	for _, bucket := range resp.Buckets {
 		// Print information
-		printInfo(client, bucketName)
+		log.Print(bucket.Name)
 	}
 
-	fmt.Println("Successfully listed tables")
-}
-
-func printInfo(client *s3.Client, tableName string) {
-	// Set the parameters
-	params := &s3.DescribeTableInput{
-		TableName: &tableName,
-	}
-
-	s3.Lis
-
-	// Get table information
-	resp, err := client.DescribeTable(context.TODO(), params)
-	if err != nil {
-		log.Fatalf("failed to get table information: %v", err)
-	}
-
-	log.Printf("Information of table [%s]", tableName)
-	log.Printf("Count of items: %d", resp.Table.ItemCount)
-	log.Printf("Size (bytes): %d", resp.Table.TableSizeBytes)
-	log.Printf("Status: %s", string(resp.Table.TableStatus))
+	log.Println("Successfully listed buckets")
 }
