@@ -1,4 +1,4 @@
-package example1
+package example2
 
 import (
 	"context"
@@ -6,7 +6,7 @@ import (
 	"log"
 
 	"github.com/aws/aws-sdk-go-v2/config"
-	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/spf13/cobra"
 )
@@ -14,45 +14,47 @@ import (
 // List is a convenient function for Cobra.
 func List(cmd *cobra.Command, args []string) {
 	// Load configuration
-	cfg, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion("us-east-2"))
+	cfg, err := config.LoadDefaultConfig(context.TODO())
 	if err != nil {
 		log.Fatalf("unable to load configuration: %v", err)
 	}
 
-	// Create the DynamoDB client
-	client := dynamodb.NewFromConfig(cfg)
+	// Create the S3 client
+	client := s3.NewFromConfig(cfg)
 
 	// Set the parameters
-	params := &dynamodb.ListTablesInput{
+	params := &s3.ListBucketsInput{
 		Limit: aws.Int32(5),
 	}
 
 	// List tables
-	resp, err := client.ListTables(context.TODO(), params)
+	resp, err := client.ListBuckets(context.TODO(), params)
 	if err != nil {
 		log.Fatalf("failed to list tables: %v", err)
 	}
 
-	if len(resp.TableNames) == 0 {
+	if len(resp.BucketNames) == 0 {
 		log.Print("no table has been found")
 	} else {
-		log.Printf("%d tables has been found", len(resp.TableNames))
+		log.Printf("%d tables has been found", len(resp.BucketNames))
 	}
 
-	// Process the tables
-	for _, tableName := range resp.TableNames {
+	// Process the buckets
+	for _, bucketName := range resp.BucketNames {
 		// Print information
-		printInfo(client, tableName)
+		printInfo(client, bucketName)
 	}
 
 	fmt.Println("Successfully listed tables")
 }
 
-func printInfo(client *dynamodb.Client, tableName string) {
+func printInfo(client *s3.Client, tableName string) {
 	// Set the parameters
-	params := &dynamodb.DescribeTableInput{
+	params := &s3.DescribeTableInput{
 		TableName: &tableName,
 	}
+
+	s3.Lis
 
 	// Get table information
 	resp, err := client.DescribeTable(context.TODO(), params)
