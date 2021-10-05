@@ -9,8 +9,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// List is a convenient function for Cobra.
-func List(cmd *cobra.Command, args []string) {
+// ListBuckets is a convenient function for Cobra.
+func ListBuckets(cmd *cobra.Command, args []string) {
 	// Load configuration
 	cfg, err := config.LoadDefaultConfig(context.TODO())
 	if err != nil {

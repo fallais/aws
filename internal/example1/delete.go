@@ -12,8 +12,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Put is a convenient function for Cobra.
-func Put(cmd *cobra.Command, args []string) {
+// Delete is a convenient function for Cobra.
+func Delete(cmd *cobra.Command, args []string) {
 	// Get the table from flags
 	tableName, err := cmd.Flags().GetString("tableName")
 	if err != nil {
@@ -30,17 +30,15 @@ func Put(cmd *cobra.Command, args []string) {
 	client := dynamodb.NewFromConfig(cfg)
 
 	// Set the parameters
-	params := &dynamodb.PutItemInput{
+	params := &dynamodb.DeleteItemInput{
 		TableName: aws.String(tableName),
-		Item: map[string]types.AttributeValue{
-			"_id":   &types.AttributeValueMemberS{Value: "12346"},
-			"name":  &types.AttributeValueMemberS{Value: "John Doe"},
-			"email": &types.AttributeValueMemberS{Value: "john@doe.io"},
+		Key: map[string]types.AttributeValue{
+			"_id": &types.AttributeValueMemberS{Value: "12346"},
 		},
 	}
 
-	// Put item into table
-	_, err = client.PutItem(context.TODO(), params)
+	// Delete item
+	_, err = client.DeleteItem(context.TODO(), params)
 	if err != nil {
 		log.Fatalf("error while puting item into table: %v", err)
 	}

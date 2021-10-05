@@ -2,6 +2,7 @@ package example1
 
 import (
 	"context"
+	"fmt"
 	"log"
 
 	"github.com/aws/aws-sdk-go-v2/config"
@@ -13,7 +14,7 @@ import (
 // List is a convenient function for Cobra.
 func List(cmd *cobra.Command, args []string) {
 	// Load configuration
-	cfg, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion("us-east-2"))
+	cfg, err := config.LoadDefaultConfig(context.TODO())
 	if err != nil {
 		log.Fatalf("unable to load configuration: %v", err)
 	}
@@ -41,13 +42,16 @@ func List(cmd *cobra.Command, args []string) {
 	// Process the tables
 	for _, tableName := range resp.TableNames {
 		// Print information
-		printInfo(client, tableName)
+		err := printInfo(client, tableName)
+		if err != nil {
+			log.Fatalf("failed to print information for table [%s]: %v", tableName, err)
+		}
 	}
 
 	log.Println("Successfully listed tables")
 }
 
-func printInfo(client *dynamodb.Client, tableName string) {
+func printInfo(client *dynamodb.Client, tableName string) error {
 	// Set the parameters
 	params := &dynamodb.DescribeTableInput{
 		TableName: &tableName,
@@ -56,11 +60,13 @@ func printInfo(client *dynamodb.Client, tableName string) {
 	// Get table information
 	resp, err := client.DescribeTable(context.TODO(), params)
 	if err != nil {
-		log.Fatalf("failed to get table information: %v", err)
+		return fmt.Errorf("error while getting information of table [%s]: %v", tableName, err)
 	}
 
 	log.Printf("Information of table [%s]", tableName)
 	log.Printf("Count of items: %d", resp.Table.ItemCount)
 	log.Printf("Size (bytes): %d", resp.Table.TableSizeBytes)
 	log.Printf("Status: %s", string(resp.Table.TableStatus))
+
+	return nil
 }
